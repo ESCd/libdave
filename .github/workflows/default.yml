@@ -60,7 +60,7 @@ jobs:
 
       - name: download libdave
         shell: pwsh
-        run: .\tool\download.sp1 -OutputDir src -Version ${{ inputs.version }}
+        run: .\tool\download.ps1 -OutputDir src -Version ${{ inputs.version }}
 
       - name: pack
         run: dotnet pack src/libdave.csproj -c Release -o dist -p:PackageVersion="${{ inputs.version }}" --no-restore
