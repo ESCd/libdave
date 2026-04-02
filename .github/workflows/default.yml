@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        default: ${{ vars.VERSION || '1.1.1' }}
+        default: "1.1.1"
         description: "version"
         type: string
 
