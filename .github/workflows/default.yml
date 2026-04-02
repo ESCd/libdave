@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        default: 1.1.1
+        default: ${{ vars.VERSION || '1.1.1' }}
         description: "version"
         type: string
 
@@ -62,10 +62,10 @@ jobs:
 
       - name: download libdave
         shell: pwsh
-        run: .\tool\download.ps1 -OutputDir src -Version ${{ inputs.version }}
+        run: .\tool\download.ps1 -Version "${{ inputs.version || vars.VERSION }}" -OutputDir src
 
       - name: pack
-        run: dotnet pack src/libdave.csproj -c Release -o dist -p:PackageVersion="${{ inputs.version }}" --no-restore
+        run: dotnet pack src/libdave.csproj -c Release -o dist -p:PackageVersion="${{ inputs.version || vars.VERSION }}" --no-restore
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
