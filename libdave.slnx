@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/sample/">
+    <Project Path="sample/libdave.sample.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/libdave.csproj" />
+  </Folder>
+</Solution>

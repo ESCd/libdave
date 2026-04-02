@@ -1,0 +1,106 @@
+env:
+  DOTNET_NOLOGO: true
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  PLUGIN_SDK_CACHE: ${{ github.workspace }}/.plugins/cache
+  LIBDAVE_VERSION: 1.1.1
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      version:
+        default: ${{ env.LIBDAVE_VERSION }}
+        description: "version"
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          cache: true
+          cache-dependency-path: ./**/packages.lock.json
+          global-json-file: global.json
+
+      - name: restore sample
+        run: dotnet restore sample/libdave.sample.csproj --locked-mode
+
+      - name: build sample
+        run: dotnet build sample/libdave.sample.csproj --no-restore
+
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          cache: true
+          cache-dependency-path: ./**/packages.lock.json
+          global-json-file: global.json
+
+      - name: restore
+        run: dotnet restore --locked-mode
+
+      - name: download libdave
+        shell: pwsh
+        run: .\tool\download.sp1 -OutputDir src -Version ${{ inputs.version }}
+
+      - name: pack
+        run: dotnet pack src/libdave.csproj -c Release -o dist --no-restore
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libdave
+          path: dist
+
+  publish:
+    if: startsWith(github.ref, 'refs/heads/main')
+
+    needs: [pack]
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: global.json
+
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: nuget login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: libdave-deploy
+
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: libdave
+
+      - name: push
+        run: dotnet nuget push "*.nupkg" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate

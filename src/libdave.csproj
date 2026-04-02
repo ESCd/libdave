@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.134">
+
+  <PropertyGroup>
+    <Description>Native library assets for libdave.</Description>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageReadMeFile>README.md</PackageReadMeFile>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\README.md" Pack="true" PackagePath="\" />
+    <Content Include="build\**\*.*" Pack="true" PackagePath="build\" />
+    <Content Include="runtimes\**\*.*" Pack="true" PackagePath="runtimes\" />
+  </ItemGroup>
+
+</Project>
