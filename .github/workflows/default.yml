@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 1
 
       - name: setup dotnet
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           cache: true
           cache-dependency-path: ./**/packages.lock.json
@@ -49,7 +49,7 @@ jobs:
           fetch-depth: 1
 
       - name: setup dotnet
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           cache: true
           cache-dependency-path: ./**/packages.lock.json
@@ -87,7 +87,7 @@ jobs:
           fetch-depth: 1
 
       - name: setup dotnet
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           global-json-file: global.json
 
