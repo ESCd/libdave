@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: setup dotnet
         uses: actions/setup-dotnet@v4
@@ -44,8 +46,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          fetch-tags: true
+          fetch-depth: 1
 
       - name: setup dotnet
         uses: actions/setup-dotnet@v4
@@ -83,7 +84,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          sparse-checkout: global.json
+          fetch-depth: 1
 
       - name: setup dotnet
         uses: actions/setup-dotnet@v4
