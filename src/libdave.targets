@@ -1,0 +1,82 @@
+<Project>
+
+  <PropertyGroup>
+    <LibDaveDownloadRetries>3</LibDaveDownloadRetries>
+    <LibDaveOutput>$(BaseIntermediateOutputPath)\libdave</LibDaveOutput>
+
+    <LibDaveAssetsFile>$(BaseIntermediateOutputPath)\libdave.assets</LibDaveAssetsFile>
+    <LibDaveAssetsOutput>$(LibDaveOutput)\assets</LibDaveAssetsOutput>
+
+    <LibDavePackagesFile>$(BaseIntermediateOutputPath)\libdave.packages</LibDavePackagesFile>
+    <LibDavePackagesOutput>$(LibDaveOutput)\packages</LibDavePackagesOutput>
+  </PropertyGroup>
+
+  <Target Name="RestoreLibDave" AfterTargets="_GetAllRestoreProjectPathItems" BeforeTargets="PrepareForBuild;Restore;">
+    <CallTarget Targets="_DownloadLibDavePackages;_ExtractLibDaveAssets" />
+
+    <ItemGroup>
+      <LibDaveRuntimeLibrary Include="$(LibDaveAssetsOutput)\**\bin\*.*" />
+      <LibDaveStaticLibrary Include="$(LibDaveAssetsOutput)\**\lib\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(LibDaveRuntimeLibrary)" DestinationFolder="runtimes\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveRuntimeLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(LibDaveStaticLibrary)" DestinationFolder="static\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveStaticLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="_DownloadLibDavePackages" Returns="$(LibDavePackagesFile);$(LibDavePackagesOutput)\**\*.*;">
+    <ItemGroup>
+      <FileWrites Include="$(LibDavePackagesFile);$(LibDavePackagesOutput)\**\*.*" />
+    </ItemGroup>
+
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-linux-arm64-boringssl.zip">
+      <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
+    </DownloadFile>
+
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-linux-x64-boringssl.zip">
+      <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
+    </DownloadFile>
+
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-macos-arm64-boringssl.zip">
+      <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
+    </DownloadFile>
+
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-macos-x64-boringssl.zip">
+      <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
+    </DownloadFile>
+
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-windows-x64-boringssl.zip">
+      <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
+    </DownloadFile>
+
+    <GetFileHash Files="@(_LibDavePackage)">
+      <Output TaskParameter="Items" ItemName="_LibDavePackageHash" />
+    </GetFileHash>
+    <WriteLinesToFile File="$(LibDavePackagesFile)" Lines="@(_LibDavePackageHash->'%(Identity);%(FileHash)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
+
+    <Message Text="Downloaded libdave: @(_LibDavePackage)" />
+  </Target>
+
+  <Target Name="_ExtractLibDaveAssets" Returns="$(LibDaveAssetsFile);$(LibDaveAssetsOutput)\**\*.*">
+    <ItemGroup>
+      <FileWrites Include="$(LibDaveAssetsFile);$(LibDaveAssetsOutput)\**\*.*" />
+    </ItemGroup>
+
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-arm64-boringssl.zip" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-x64-boringssl.zip" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\macos-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-macos-arm64-boringssl.zip" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\macos-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-macos-x64-boringssl.zip" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\win-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-windows-x64-boringssl.zip" />
+
+    <ItemGroup>
+      <_LibDaveAsset Include="$(LibDaveAssetsOutput)\**\*.*" />
+    </ItemGroup>
+
+    <GetFileHash Files="@(_LibDaveAsset)">
+      <Output TaskParameter="Items" ItemName="_LibDaveAssetHash" />
+    </GetFileHash>
+    <WriteLinesToFile File="$(LibDaveAssetsFile)" Lines="@(_LibDaveAssetHash->'%(Identity);%(FileHash)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
+
+    <Message Text="Extracted libdave: @(_LibDaveAsset)" />
+  </Target>
+
+</Project>

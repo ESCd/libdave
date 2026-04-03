@@ -9,11 +9,6 @@ on:
     branches:
       - develop
   workflow_dispatch:
-    inputs:
-      version:
-        default: "1.1.1"
-        description: "version"
-        type: string
 
 env:
   DOTNET_NOLOGO: true
@@ -48,7 +43,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: setup dotnet
         uses: actions/setup-dotnet@v5
@@ -60,12 +56,8 @@ jobs:
       - name: restore
         run: dotnet restore --locked-mode
 
-      - name: download libdave
-        shell: pwsh
-        run: .\tool\download.ps1 -Version "${{ inputs.version || vars.VERSION }}" -OutputDir src
-
       - name: pack
-        run: dotnet pack src/libdave.csproj -c Release -o dist -p:PackageVersion="${{ inputs.version || vars.VERSION }}" --no-restore
+        run: dotnet pack src/libdave.csproj -c Release -o dist --no-restore
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
