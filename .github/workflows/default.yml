@@ -38,6 +38,8 @@ jobs:
         run: dotnet build sample/libdave.sample.csproj --no-restore
 
   pack:
+    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')
+
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -66,8 +68,6 @@ jobs:
           path: dist
 
   publish:
-    if: startsWith(github.ref, 'refs/heads/main')
-
     needs: [pack]
     runs-on: ubuntu-latest
 
