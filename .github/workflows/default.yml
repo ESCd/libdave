@@ -59,10 +59,10 @@ jobs:
         run: dotnet restore --locked-mode
 
       - name: pack
-        run: dotnet pack src/libdave.csproj -c Release -o dist --no-restore
+        run: dotnet build src/libdave.csproj -c Release && dotnet pack src/libdave.csproj -c Release -o dist --no-build
 
       - name: upload artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7s
         with:
           name: libdave
           path: dist

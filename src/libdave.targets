@@ -11,7 +11,7 @@
     <LibDavePackagesOutput>$(LibDaveOutput)\packages</LibDavePackagesOutput>
   </PropertyGroup>
 
-  <Target Name="RestoreLibDave" AfterTargets="_GetAllRestoreProjectPathItems" BeforeTargets="PrepareForBuild;Restore;">
+  <Target Name="RestoreLibDave" AfterTargets="_GetAllRestoreProjectPathItems" BeforeTargets="PrepareForBuild;ResolveAssemblyReferences;Restore;">
     <CallTarget Targets="_DownloadLibDavePackages;_ExtractLibDaveAssets" />
 
     <ItemGroup>

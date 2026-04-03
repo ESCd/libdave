@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.Build.NoTargets/3.7.134">
+  <Import Project="libdave.targets" />
 
   <PropertyGroup>
     <Description>Native library assets for libdave.</Description>
@@ -18,6 +19,4 @@
     <Content Include="runtimes\**\*.*" Pack="true" PackagePath="runtimes\" />
     <Content Include="static\**\*.*" Pack="true" PackagePath="static\" />
   </ItemGroup>
-
-  <Import Project="libdave.targets" />
 </Project>
