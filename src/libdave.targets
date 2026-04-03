@@ -1,4 +1,4 @@
-<Project>
+<Project >
 
   <PropertyGroup>
     <LibDaveDownloadRetries>3</LibDaveDownloadRetries>
@@ -12,10 +12,7 @@
   </PropertyGroup>
 
   <Target Name="RestoreLibDave" AfterTargets="_GetAllRestoreProjectPathItems" BeforeTargets="PrepareForBuild;Restore;">
-    <CallTarget Targets="_DownloadLibDavePackages" />
-    <Exec Command="pwsh -Command &quot;Start-Sleep -Milliseconds 375&quot;" />
-    <CallTarget Targets="_ExtractLibDaveAssets" />
-    <Exec Command="pwsh -Command &quot;Start-Sleep -Milliseconds 375&quot;" />
+    <CallTarget Targets="_DownloadLibDavePackages;_ExtractLibDaveAssets" />
 
     <ItemGroup>
       <LibDaveRuntimeLibrary Include="$(LibDaveAssetsOutput)\**\bin\*.*" />
