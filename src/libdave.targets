@@ -12,7 +12,9 @@
   </PropertyGroup>
 
   <Target Name="RestoreLibDave" AfterTargets="_GetAllRestoreProjectPathItems" BeforeTargets="PrepareForBuild;Restore;">
-    <CallTarget Targets="_DownloadLibDavePackages;_ExtractLibDaveAssets" />
+    <CallTarget Targets="_DownloadLibDavePackages" />
+    <!-- <Exec Command="powershell -Command &quot;Start-Sleep -Milliseconds 375&quot;" /> -->
+    <CallTarget Targets="_ExtractLibDaveAssets" />
 
     <ItemGroup>
       <LibDaveRuntimeLibrary Include="$(LibDaveAssetsOutput)\**\bin\*.*" />
@@ -61,11 +63,11 @@
       <FileWrites Include="$(LibDaveAssetsFile);$(LibDaveAssetsOutput)\**\*.*" />
     </ItemGroup>
 
-    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-arm64-boringssl.zip" />
-    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-x64-boringssl.zip" />
-    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\macos-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-macos-arm64-boringssl.zip" />
-    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\macos-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-macos-x64-boringssl.zip" />
-    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\win-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-windows-x64-boringssl.zip" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-arm64-boringssl.zip" SkipUnchangedFiles="true" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-x64-boringssl.zip" SkipUnchangedFiles="true" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\macos-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-macos-arm64-boringssl.zip" SkipUnchangedFiles="true" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\macos-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-macos-x64-boringssl.zip" SkipUnchangedFiles="true" />
+    <Unzip DestinationFolder="$(LibDaveAssetsOutput)\win-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-windows-x64-boringssl.zip" SkipUnchangedFiles="true" />
 
     <ItemGroup>
       <_LibDaveAsset Include="$(LibDaveAssetsOutput)\**\*.*" />
