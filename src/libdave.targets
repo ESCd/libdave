@@ -28,23 +28,28 @@
       <FileWrites Include="$(LibDavePackagesFile);$(LibDavePackagesOutput)\**\*.*" />
     </ItemGroup>
 
-    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-linux-arm64-boringssl.zip">
+    <PropertyGroup>
+      <_LibDaveDownloadBaseUrl>https://github.com/discord/libdave/releases/download/</_LibDaveDownloadBaseUrl>
+      <_LibDaveReleaseTag>$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))</_LibDaveReleaseTag>
+    </PropertyGroup>
+
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="$(_LibDaveDownloadBaseUrl)$(_LibDaveReleaseTag)/libdave-linux-arm64-boringssl.zip">
       <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
     </DownloadFile>
 
-    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-linux-x64-boringssl.zip">
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="$(_LibDaveDownloadBaseUrl)$(_LibDaveReleaseTag)/libdave-linux-x64-boringssl.zip">
       <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
     </DownloadFile>
 
-    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-macos-arm64-boringssl.zip">
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="$(_LibDaveDownloadBaseUrl)$(_LibDaveReleaseTag)/libdave-macos-arm64-boringssl.zip">
       <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
     </DownloadFile>
 
-    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-macos-x64-boringssl.zip">
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="$(_LibDaveDownloadBaseUrl)$(_LibDaveReleaseTag)/libdave-macos-x64-boringssl.zip">
       <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
     </DownloadFile>
 
-    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="https://github.com/discord/libdave/releases/download/$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))/libdave-windows-x64-boringssl.zip">
+    <DownloadFile DestinationFolder="$(LibDavePackagesOutput)" SkipUnchangedFiles="true" Retries="$(LibDaveDownloadRetries)" SourceUrl="$(_LibDaveDownloadBaseUrl)$(_LibDaveReleaseTag)/libdave-windows-x64-boringssl.zip">
       <Output TaskParameter="DownloadedFile" ItemName="_LibDavePackage" />
     </DownloadFile>
 
