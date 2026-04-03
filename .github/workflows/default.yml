@@ -62,7 +62,7 @@ jobs:
         run: dotnet build src/libdave.csproj -c Release && dotnet pack src/libdave.csproj -c Release -o dist --no-build
 
       - name: upload artifact
-        uses: actions/upload-artifact@v7s
+        uses: actions/upload-artifact@v7
         with:
           name: libdave
           path: dist
