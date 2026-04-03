@@ -1,16 +1,22 @@
 <Project Sdk="Microsoft.Build.NoTargets/3.7.134">
+  <Import Project="libdave.targets" />
 
   <PropertyGroup>
     <Description>Native library assets for libdave.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <NoWarn>$(NoWarn);NU5128;</NoWarn>
     <PackageReadMeFile>README.md</PackageReadMeFile>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="..\README.md" Pack="true" PackagePath="\" />
+
     <Content Include="build\**\*.*" Pack="true" PackagePath="build\" />
     <Content Include="runtimes\**\*.*" Pack="true" PackagePath="runtimes\" />
+    <Content Include="static\**\*.*" Pack="true" PackagePath="static\" />
   </ItemGroup>
-
 </Project>

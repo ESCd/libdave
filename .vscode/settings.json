@@ -18,7 +18,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "*.cs": "${capture}.*.cs",
-    "*.csproj": "${capture}.csproj.user,packages.lock.json",
+    "*.csproj": "${capture}.csproj.user,${capture}.props,${capture}.targets,packages.lock.json",
     "*.json": "${capture}.*.json",
   },
   "files.associations": {

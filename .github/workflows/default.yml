@@ -9,11 +9,6 @@ on:
     branches:
       - develop
   workflow_dispatch:
-    inputs:
-      version:
-        default: "1.1.1"
-        description: "version"
-        type: string
 
 env:
   DOTNET_NOLOGO: true
@@ -43,12 +38,15 @@ jobs:
         run: dotnet build sample/libdave.sample.csproj --no-restore
 
   pack:
+    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')
+
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: setup dotnet
         uses: actions/setup-dotnet@v5
@@ -60,12 +58,8 @@ jobs:
       - name: restore
         run: dotnet restore --locked-mode
 
-      - name: download libdave
-        shell: pwsh
-        run: .\tool\download.ps1 -Version "${{ inputs.version || vars.VERSION }}" -OutputDir src
-
       - name: pack
-        run: dotnet pack src/libdave.csproj -c Release -o dist -p:PackageVersion="${{ inputs.version || vars.VERSION }}" --no-restore
+        run: dotnet build src/libdave.csproj -c Release && dotnet pack src/libdave.csproj -c Release -o dist --no-build
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
@@ -74,8 +68,6 @@ jobs:
           path: dist
 
   publish:
-    if: startsWith(github.ref, 'refs/heads/main')
-
     needs: [pack]
     runs-on: ubuntu-latest
 

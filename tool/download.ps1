@@ -48,8 +48,18 @@ Write-Host "[!] Moving Assets to '$OutputDir'..."
 foreach ($runtime in $runtimes) {
     $rid = $(Get-NetCoreRuntime $runtime)
 
-    New-Item -ItemType Directory -Path ([System.IO.Path]::Combine($OutputDir, "runtimes", $rid, "native")) -Force | Out-Null
     foreach ($file in Get-ChildItem -Path ([System.IO.Path]::Combine($obj, $runtime, "lib")) -Recurse -File) {
+        New-Item -ItemType Directory -Path ([System.IO.Path]::Combine($OutputDir, "static", $rid, "native")) -Force | Out-Null
+
+        $destination = [System.IO.Path]::Combine($OutputDir, "static", $rid, "native", $file.Name)
+        Move-Item -Path $file.FullName -Destination $destination -Force
+
+        Write-Host "[!] Moved ${file.FullName} to '$destination'"
+    }
+
+    foreach ($file in Get-ChildItem -Path ([System.IO.Path]::Combine($obj, $runtime, "bin")) -Recurse -File) {
+        New-Item -ItemType Directory -Path ([System.IO.Path]::Combine($OutputDir, "runtimes", $rid, "native")) -Force | Out-Null
+
         $destination = [System.IO.Path]::Combine($OutputDir, "runtimes", $rid, "native", $file.Name)
         Move-Item -Path $file.FullName -Destination $destination -Force
 
