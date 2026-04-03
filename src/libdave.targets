@@ -11,7 +11,7 @@
     <LibDavePackagesOutput>$(LibDaveOutput)\packages</LibDavePackagesOutput>
   </PropertyGroup>
 
-  <Target Name="RestoreLibDave" AfterTargets="_GetAllRestoreProjectPathItems" BeforeTargets="PrepareForBuild;ResolveAssemblyReferences;Restore;">
+  <Target Name="RestoreLibDave" AfterTargets="_GetAllRestoreProjectPathItems" BeforeTargets="PrepareForRun;Restore">
     <CallTarget Targets="_DownloadLibDavePackages;_ExtractLibDaveAssets" />
 
     <ItemGroup>
@@ -19,15 +19,16 @@
       <LibDaveStaticLibrary Include="$(LibDaveAssetsOutput)\**\lib\*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(LibDaveRuntimeLibrary)" DestinationFolder="runtimes\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveRuntimeLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(LibDaveStaticLibrary)" DestinationFolder="static\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveStaticLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(LibDaveRuntimeLibrary)" DestinationFolder="runtimes\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveRuntimeLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
+
+    <Copy SourceFiles="@(LibDaveStaticLibrary)" DestinationFolder="static\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveStaticLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
   </Target>
 
   <Target Name="_DownloadLibDavePackages" Returns="$(LibDavePackagesFile);$(LibDavePackagesOutput)\**\*.*;">
-    <ItemGroup>
-      <FileWrites Include="$(LibDavePackagesFile);$(LibDavePackagesOutput)\**\*.*" />
-    </ItemGroup>
-
     <PropertyGroup>
       <_LibDaveDownloadBaseUrl>https://github.com/discord/libdave/releases/download/</_LibDaveDownloadBaseUrl>
       <_LibDaveReleaseTag>$([System.Uri]::EscapeDataString('v$(LibDaveVersion)/cpp'))</_LibDaveReleaseTag>
@@ -59,13 +60,12 @@
     <WriteLinesToFile File="$(LibDavePackagesFile)" Lines="@(_LibDavePackageHash->'%(Identity);%(FileHash)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
 
     <Message Text="Downloaded libdave: @(_LibDavePackage)" />
+    <ItemGroup>
+      <FileWrites Include="$(LibDavePackagesFile);@(_LibDavePackage)" />
+    </ItemGroup>
   </Target>
 
   <Target Name="_ExtractLibDaveAssets" Returns="$(LibDaveAssetsFile);$(LibDaveAssetsOutput)\**\*.*">
-    <ItemGroup>
-      <FileWrites Include="$(LibDaveAssetsFile);$(LibDaveAssetsOutput)\**\*.*" />
-    </ItemGroup>
-
     <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-arm64-boringssl.zip" SkipUnchangedFiles="true" />
     <Unzip DestinationFolder="$(LibDaveAssetsOutput)\linux-x64" SourceFiles="$(LibDavePackagesOutput)\libdave-linux-x64-boringssl.zip" SkipUnchangedFiles="true" />
     <Unzip DestinationFolder="$(LibDaveAssetsOutput)\macos-arm64" SourceFiles="$(LibDavePackagesOutput)\libdave-macos-arm64-boringssl.zip" SkipUnchangedFiles="true" />
@@ -82,6 +82,9 @@
     <WriteLinesToFile File="$(LibDaveAssetsFile)" Lines="@(_LibDaveAssetHash->'%(Identity);%(FileHash)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
 
     <Message Text="Extracted libdave: @(_LibDaveAsset)" />
+    <ItemGroup>
+      <FileWrites Include="$(LibDaveAssetsFile);@(_LibDaveAsset)" />
+    </ItemGroup>
   </Target>
 
 </Project>

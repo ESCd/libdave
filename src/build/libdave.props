@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <LibDaveDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..'))</LibDaveDirectory>
-    <LibDaveEnableRuntimeLinking>true</LibDaveEnableRuntimeLinking>
     <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveEnableStaticLinking>
   </PropertyGroup>
 

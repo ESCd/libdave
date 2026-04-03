@@ -1,17 +1,8 @@
 <Project>
 
-  <ItemGroup Condition=" '$(LibDaveEnableRuntimeLinking)' == 'true' ">
-    <Content Include="$(LibDaveDirectory)\runtimes\**\*.*;$(LibDaveDirectory)\static\**\*.*" Exclude="$(LibDaveDirectory)\static\**\*.a;$(LibDaveDirectory)\static\**\*.dylib;$(LibDaveDirectory)\static\**\*.lib" Visible="false">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <Link>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</Link>
-      <TargetPath>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
-    </Content>
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
-    <DirectPInvoke Include="libdave" />
     <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*.*" />
+    <DirectPInvoke Include="libdave" />
   </ItemGroup>
 
 </Project>
