@@ -13,7 +13,6 @@ on:
 env:
   DOTNET_NOLOGO: true
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-  PLUGIN_SDK_CACHE: ${{ github.workspace }}/.plugins/cache
 
 jobs:
   build:
