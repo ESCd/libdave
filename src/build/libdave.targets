@@ -12,11 +12,18 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(LibDaveEnableRuntimeLinking)' == 'true' ">
-    <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="false">
+    <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' == '' ">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <Link>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</Link>
       <TargetPath>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+    </Content>
+
+    <Content Include="$(LibDaveDirectory)\shared\$(RuntimeIdentifier)\native\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' != '' ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+      <TargetPath>%(Filename)%(Extension)</TargetPath>
     </Content>
   </ItemGroup>
 

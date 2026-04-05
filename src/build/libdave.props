@@ -4,6 +4,7 @@
     <LibDaveDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..'))</LibDaveDirectory>
     <LibDaveEnableRuntimeLinking Condition=" '$(LibDaveEnableRuntimeLinking)' == '' ">true</LibDaveEnableRuntimeLinking>
     <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' == 'win-x64' ">true</LibDaveEnableStaticLinking>
+    <LibDaveItemsVisible Condition=" '$(LibDaveItemsVisible)' == '' ">false</LibDaveItemsVisible>
   </PropertyGroup>
 
 </Project>
