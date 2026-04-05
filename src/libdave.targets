@@ -15,11 +15,11 @@
     <CallTarget Targets="_DownloadLibDavePackages;_ExtractLibDaveAssets" />
 
     <ItemGroup>
-      <LibDaveRuntimeLibrary Include="$(LibDaveAssetsOutput)\**\bin\*.*" />
-      <LibDaveStaticLibrary Include="$(LibDaveAssetsOutput)\**\lib\*.*" />
+      <LibDaveSharedLibrary Include="$(LibDaveAssetsOutput)\**\bin\*.dll;$(LibDaveAssetsOutput)\**\lib\*.dylib;$(LibDaveAssetsOutput)\**\lib\*.so" />
+      <LibDaveStaticLibrary Include="$(LibDaveAssetsOutput)\**\lib\*.a;$(LibDaveAssetsOutput)\**\lib\*.lib" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(LibDaveRuntimeLibrary)" DestinationFolder="runtimes\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveRuntimeLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true">
+    <Copy SourceFiles="@(LibDaveSharedLibrary)" DestinationFolder="shared\$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName(%(LibDaveSharedLibrary.RecursiveDir)))))\native" SkipUnchangedFiles="true">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
     </Copy>
 

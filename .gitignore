@@ -483,4 +483,5 @@ dist
 
 src/lib
 src/runtimes
+src/shared
 src/static
