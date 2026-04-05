@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Description>Native library assets for libdave.</Description>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <NoWarn>$(NoWarn);NU5128;</NoWarn>
+    <NoWarn>$(NoWarn);NU5100;NU5128;</NoWarn>
     <PackageReadMeFile>README.md</PackageReadMeFile>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
