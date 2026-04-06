@@ -138,8 +138,9 @@ jobs:
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
           cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
+          cp "${VCPKG_INSTALLED}/lib/libmlspp.a" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.a"
+          cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
 
       - name: prepare artifact (macOS)
         if: runner.os == 'macOS'
@@ -152,6 +153,7 @@ jobs:
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
           cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
+          cp "${VCPKG_INSTALLED}/lib/libmlspp.a" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.a"
           cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
 
       - name: prepare artifact (windows)
@@ -165,6 +167,7 @@ jobs:
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
           cp "${VCPKG_INSTALLED}/lib/ssl.lib" "${{ env.ARTIFACT_DIR }}/lib/libssl.lib"
+          cp "${VCPKG_INSTALLED}/lib/mlspp.lib" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.lib"
           cp "${VCPKG_INSTALLED}/lib/crypto.lib" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.lib"
 
       - name: upload artifact
