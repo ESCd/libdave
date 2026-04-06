@@ -154,7 +154,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: libdave-${{ matrix.rid }}
-          path: dist
+          path: ../../dist
 
   pack:
     needs: [build]
