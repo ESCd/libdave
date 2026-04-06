@@ -1,6 +1,4 @@
 <Project Sdk="Microsoft.Build.NoTargets/3.7.134">
-  <Import Project="libdave.targets" />
-
   <PropertyGroup>
     <Description>Native library assets for libdave.</Description>
     <InvariantGlobalization>true</InvariantGlobalization>

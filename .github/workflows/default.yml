@@ -12,88 +12,149 @@ on:
 
 env:
   DOTNET_NOLOGO: true
+  CMAKE_TOOLCHAIN_FILE: ${{ github.workspace }}/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake
+  LIBDAVE_REF: v1.1.1/cpp
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+  VCPKG_CACHE_DIR: ${{ github.workspace }}/vcpkg_cache
+
+defaults:
+  run:
+    working-directory: ./cpp
+    shell: bash
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: build (${{ matrix.rid }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: linux-x64
+            runner: ubuntu-24.04
+
+          - rid: linux-arm64
+            runner: ubuntu-24.04-arm
+
+          - rid: osx-arm64
+            runner: macos-26
+
+          - rid: osx-x64
+            runner: macos-26-intel
+
+          - rid: win-x64
+            runner: windows-2025
+
     steps:
       - name: checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 1
-
-      - name: setup dotnet
-        uses: actions/setup-dotnet@v5
-        with:
-          cache: true
-          cache-dependency-path: ./**/packages.lock.json
-          global-json-file: global.json
-
-      - name: restore sample
-        run: dotnet restore sample/libdave.sample.csproj --locked-mode
-
-      - name: build sample
-        run: dotnet build sample/libdave.sample.csproj --no-restore
-
-  pack:
-    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v6
-        with:
+          repository: discord/libdave
+          ref: ${{ env.LIBDAVE_REF }}
+          submodules: recursive
           fetch-depth: 0
-          fetch-tags: true
 
-      - name: setup dotnet
-        uses: actions/setup-dotnet@v5
+      - name: capture vcpkg revision
+        run: git -C vcpkg rev-parse HEAD > vcpkg_commit.txt
+
+      - name: restore vcpkg cache
+        id: cache-vcpkg-restore
+        uses: actions/cache/restore@v5
         with:
-          cache: true
-          cache-dependency-path: ./**/packages.lock.json
-          global-json-file: global.json
+          path: ${{ env.VCPKG_CACHE_DIR }}
+          key: vcpkg-${{ matrix.runner }}-boringssl-v03-${{ hashFiles('cpp/vcpkg_commit.txt', 'cpp/vcpkg-alts/**') }}
+          restore-keys: |
+            vcpkg-${{ matrix.runner }}-boringssl
 
-      - name: restore
-        run: dotnet restore --locked-mode
+      - name: setup tools (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y nasm
 
-      - name: pack
-        run: dotnet build src/libdave.csproj -c Release && dotnet pack src/libdave.csproj -c Release -o dist --no-build
+      - name: setup tools (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install go nasm
+
+          echo "CC=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm@18)/bin/clang++" >> $GITHUB_ENV
+
+      - name: bootstrap vcpkg (linux/macOS)
+        if: runner.os != 'Windows'
+        run: ../vcpkg/bootstrap-vcpkg.sh -disableMetrics
+
+      - name: bootstrap vcpkg (windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: ..\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+
+      - name: setup build
+        run: echo "BUILD_DIR=${{ runner.temp }}/build" >> $GITHUB_ENV
+
+      - name: configure (shared)
+        run: |
+          make "${{ env.BUILD_DIR }}-shared" \
+            BUILD_DIR="${{ env.BUILD_DIR }}-shared" \
+            BUILD_TYPE=Release \
+            SSL=boringssl \
+            BUILD_SHARED_LIBS=ON \
+            TESTING=OFF \
+            INSTALL_VCPKG_LICENSES=ON \
+            MSVC_RUNTIME_LIBRARY=MultiThreaded
+
+      - name: configure (static)
+        run: |
+          make "${{ env.BUILD_DIR }}-static" \
+            BUILD_DIR="${{ env.BUILD_DIR }}-static" \
+            BUILD_TYPE=Release \
+            SSL=boringssl \
+            BUILD_SHARED_LIBS=OFF \
+            TESTING=OFF \
+            INSTALL_VCPKG_LICENSES=ON \
+            MSVC_RUNTIME_LIBRARY=MultiThreaded
+
+      - name: build (shared)
+        run: |
+          make all \
+            BUILD_DIR="${{ env.BUILD_DIR }}-shared" \
+            BUILD_TYPE=Release
+
+      - name: build (static)
+        run: |
+          make all \
+            BUILD_DIR="${{ env.BUILD_DIR }}-static" \
+            BUILD_TYPE=Release
+
+      - name: save vcpkg cache
+        if: steps.cache-vcpkg-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          key: ${{ steps.cache-vcpkg-restore.outputs.cache-primary-key }}
+          path: ${{ env.VCPKG_CACHE_DIR }}
+
+      - name: prepare artifact (linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p ../../dist/bin ../../dist/lib
+          cp "${{ env.BUILD_DIR }}-shared/libdave.so" ../../dist/bin/libdave.so
+          cp "${{ env.BUILD_DIR }}-static/libdave.a"  ../../dist/lib/libdave.a
+
+      - name: prepare artifact (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p ../../dist/bin ../../dist/lib
+          cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" ../../dist/bin/libdave.dylib
+          cp "${{ env.BUILD_DIR }}-static/libdave.a"     ../../dist/lib/libdave.a
+
+      - name: prepare artifact (windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir -p ../../dist/bin ../../dist/lib
+          cp "${{ env.BUILD_DIR }}-shared/Release/dave.dll"         ../../dist/bin/libdave.dll
+          cp "${{ env.BUILD_DIR }}-static/Release/dave_static.lib"  ../../dist/lib/libdave.lib
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: libdave
+          name: libdave-${{ matrix.rid }}
           path: dist
-
-  publish:
-    needs: [pack]
-    runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
-
-      - name: setup dotnet
-        uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: global.json
-
-      - name: nuget login
-        uses: NuGet/login@v1
-        id: login
-        with:
-          user: ${{ secrets.NUGET_USER }}
-
-      - name: download artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: libdave
-
-      - name: push
-        run: dotnet nuget push "*.nupkg" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
