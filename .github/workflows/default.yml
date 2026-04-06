@@ -135,23 +135,29 @@ jobs:
       - name: prepare artifact (linux)
         if: runner.os == 'Linux'
         run: |
+          tree "${{ env.BUILD_DIR }}"
+
           mkdir -p ../../dist/bin ../../dist/lib
           cp "${{ env.BUILD_DIR }}-shared/libdave.so" ../../dist/bin/libdave.so
-          cp "${{ env.BUILD_DIR }}-static/libdave.a"  ../../dist/lib/libdave.a
+          cp "${{ env.BUILD_DIR }}-static/libdave.a" ../../dist/lib/libdave.a
 
       - name: prepare artifact (macOS)
         if: runner.os == 'macOS'
         run: |
+          tree "${{ env.BUILD_DIR }}"
+
           mkdir -p ../../dist/bin ../../dist/lib
           cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" ../../dist/bin/libdave.dylib
-          cp "${{ env.BUILD_DIR }}-static/libdave.a"     ../../dist/lib/libdave.a
+          cp "${{ env.BUILD_DIR }}-static/libdave.a" ../../dist/lib/libdave.a
 
       - name: prepare artifact (windows)
         if: runner.os == 'Windows'
         run: |
+          tree "${{ env.BUILD_DIR }}"
+
           mkdir -p ../../dist/bin ../../dist/lib
-          cp "${{ env.BUILD_DIR }}-shared/Release/dave.dll"         ../../dist/bin/libdave.dll
-          cp "${{ env.BUILD_DIR }}-static/Release/dave_static.lib"  ../../dist/lib/libdave.lib
+          cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" ../../dist/bin/libdave.dll
+          cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" ../../dist/lib/libdave.lib
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
