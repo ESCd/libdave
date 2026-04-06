@@ -5,14 +5,14 @@
     <LibDaveEnableStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveEnableStaticLinking>
 
     <!-- NOTE: enable static linking if AOT publishing is enabled and a runtime identifier is specified -->
-    <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' == '' ">true</LibDaveEnableStaticLinking>
+    <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveEnableStaticLinking>
 
     <!-- NOTE: disable runtime linking if static linking is enabled -->
     <LibDaveEnableRuntimeLinking Condition=" '$(LibDaveEnableStaticLinking)' == 'true' ">false</LibDaveEnableRuntimeLinking>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' AND '$(LibDaveLinkerArgs)' == '' ">
-    <LibDaveLinkerArgs Condition=" $(RuntimeIdentifier.StartsWith('linux')) ">-Wl,-Bstatic;-Wl,-lstdc++;-Wl,-lgcc;-Wl,-Bdynamic</LibDaveLinkerArgs>
+  <PropertyGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(LibDaveLinkerArgs)' == '' AND '$(RuntimeIdentifier)' != '' ">
+    <LibDaveLinkerArgs Condition=" $(RuntimeIdentifier.StartsWith('linux')) ">-Wl,--push-state,--as-needed,-Bstatic,-lstdc++,-lgcc,--pop-state</LibDaveLinkerArgs>
     <LibDaveLinkerArgs Condition=" $(RuntimeIdentifier.StartsWith('osx')) ">-lc++</LibDaveLinkerArgs>
   </PropertyGroup>
 

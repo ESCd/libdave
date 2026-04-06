@@ -34,18 +34,23 @@ jobs:
         include:
           - rid: linux-x64
             runner: ubuntu-24.04
+            vcpkg_rid: x64-linux
 
           - rid: linux-arm64
             runner: ubuntu-24.04-arm
+            vcpkg_rid: arm64-linux
 
           - rid: osx-arm64
             runner: macos-26
+            vcpkg_rid: arm64-osx
 
           - rid: osx-x64
             runner: macos-26-intel
+            vcpkg_rid: x64-osx
 
           - rid: win-x64
             runner: windows-2025
+            vcpkg_rid: x64-windows
 
     steps:
       - name: checkout
@@ -132,6 +137,10 @@ jobs:
           cp "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.ARTIFACT_DIR }}/bin/libdave.so"
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
+          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
+          cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
+
       - name: prepare artifact (macOS)
         if: runner.os == 'macOS'
         run: |
@@ -141,6 +150,10 @@ jobs:
           cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.ARTIFACT_DIR }}/bin/libdave.dylib"
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
+          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
+          cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
+
       - name: prepare artifact (windows)
         if: runner.os == 'Windows'
         run: |
@@ -149,6 +162,10 @@ jobs:
 
           cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
           cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
+
+          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          cp "${VCPKG_INSTALLED}/lib/libssl.lib" "${{ env.ARTIFACT_DIR }}/lib/libssl.lib"
+          cp "${VCPKG_INSTALLED}/lib/libcrypto.lib" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.lib"
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
