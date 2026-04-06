@@ -127,6 +127,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          ls -la ${{ env.BUILD_DIR }}-shared && ls -la ${{ env.BUILD_DIR }}-static
+
           cp "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.ARTIFACT_DIR }}/bin/libdave.so"
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
@@ -134,6 +136,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          ls -la ${{ env.BUILD_DIR }}-shared && ls -la ${{ env.BUILD_DIR }}-static
+
           cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.ARTIFACT_DIR }}/bin/libdave.dylib"
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
@@ -141,6 +145,8 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          ls -la ${{ env.BUILD_DIR }}-shared/Release && ls -la ${{ env.BUILD_DIR }}-static/Release
+
           cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
           cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
 

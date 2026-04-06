@@ -35,10 +35,8 @@
   <ItemGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
     <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*.*" />
     <DirectPInvoke Include="dave;libdave" />
-  </ItemGroup>
 
-  <ItemGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND $(RuntimeIdentifier.StartsWith('linux')) ">
-    <LinkerArg Include="$(LibDaveLinkerArgs)" />
+    <LinkerArg Include="$(LibDaveLinkerArgs)" Condition=" '$(LibDaveLinkerArgs)' != '' " />
   </ItemGroup>
 
 </Project>
