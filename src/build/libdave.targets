@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(LibDaveLinkerArgs)' == '' AND '$(RuntimeIdentifier)' != '' ">
-    <LibDaveLinkerArgs Condition=" $(RuntimeIdentifier.StartsWith('linux')) ">-Wl,--push-state,--as-needed,-Bstatic,-lstdc++,-lgcc,--pop-state</LibDaveLinkerArgs>
+    <LibDaveLinkerArgs Condition=" $(RuntimeIdentifier.StartsWith('linux')) ">-Wl,--push-state,-Bstatic,-lstdc++,-lgcc,--pop-state</LibDaveLinkerArgs>
     <LibDaveLinkerArgs Condition=" $(RuntimeIdentifier.StartsWith('osx')) ">-lc++</LibDaveLinkerArgs>
   </PropertyGroup>
 
@@ -33,8 +33,20 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
-    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*.*" />
     <DirectPInvoke Include="dave;libdave" />
+
+    <!-- <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*.*" /> -->
+
+    <!-- NOTE: ordering matters -->
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libdave.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libhpke.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libmlspp.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libmls_ds.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libmls_vectors.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libtls_syntax.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libbytes.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libssl.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libcrypto.*" />
 
     <LinkerArg Include="$(LibDaveLinkerArgs)" Condition=" '$(LibDaveLinkerArgs)' != '' " />
   </ItemGroup>
