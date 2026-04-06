@@ -18,15 +18,15 @@ env:
   VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
   VCPKG_CACHE_DIR: ${{ github.workspace }}/vcpkg_cache
 
-defaults:
-  run:
-    working-directory: ./cpp
-    shell: bash
-
 jobs:
   build:
     name: build (${{ matrix.rid }})
     runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        working-directory: ./cpp
+        shell: bash
+
     strategy:
       fail-fast: false
       matrix:
@@ -64,8 +64,7 @@ jobs:
         with:
           path: ${{ env.VCPKG_CACHE_DIR }}
           key: vcpkg-${{ matrix.runner }}-boringssl-v03-${{ hashFiles('cpp/vcpkg_commit.txt', 'cpp/vcpkg-alts/**') }}
-          restore-keys: |
-            vcpkg-${{ matrix.runner }}-boringssl
+          restore-keys: vcpkg-${{ matrix.runner }}-boringssl
 
       - name: setup tools (Linux)
         if: runner.os == 'Linux'
@@ -75,13 +74,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install go nasm
-
-          # brew install go llvm@18 nasm
-
-          # LLVM_PREFIX="$(brew --prefix llvm@18)"
-          # echo "CC=${LLVM_PREFIX}/bin/clang" >> $GITHUB_ENV
-          # echo "CXX=${LLVM_PREFIX}/bin/clang++" >> $GITHUB_ENV
-          # echo "${LLVM_PREFIX}/bin" >> $GITHUB_PATH
+          brew unlink openssl@3 || true
+          brew unlink openssl@1.1 || true
 
       - name: bootstrap vcpkg (linux/macOS)
         if: runner.os != 'Windows'
