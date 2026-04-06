@@ -30,7 +30,7 @@
 
   <!-- libdave version -->
   <PropertyGroup>
-    <LibDaveVersion>1.1.1</LibDaveVersion>
+    <LibDaveVersion Condition=" '$(LibDaveVersion)' == '' ">1.1.1</LibDaveVersion>
   </PropertyGroup>
 
   <!-- Git Versioning + Metadata -->

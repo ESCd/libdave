@@ -13,7 +13,7 @@ on:
 env:
   DOTNET_NOLOGO: true
   CMAKE_TOOLCHAIN_FILE: ${{ github.workspace }}/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake
-  LIBDAVE_REF: v1.1.1/cpp
+  LIBDAVE_VERSION: 1.1.1
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
   VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
   VCPKG_CACHE_DIR: ${{ github.workspace }}/vcpkg_cache
@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: discord/libdave
-          ref: ${{ env.LIBDAVE_REF }}
+          ref: v${{ env.LIBDAVE_VERSION }}/cpp
           submodules: recursive
           fetch-depth: 0
 
@@ -81,12 +81,12 @@ jobs:
 
       - name: bootstrap vcpkg (linux/macOS)
         if: runner.os != 'Windows'
-        run: ../vcpkg/bootstrap-vcpkg.sh -disableMetrics
+        run: ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
 
       - name: bootstrap vcpkg (windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: ..\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+        run: .\vcpkg\bootstrap-vcpkg.bat -disableMetrics
 
       - name: setup build
         run: echo "BUILD_DIR=${{ runner.temp }}/build" >> $GITHUB_ENV
@@ -158,3 +158,102 @@ jobs:
         with:
           name: libdave-${{ matrix.rid }}
           path: dist
+
+  pack:
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    permissions:
+      checks: write
+      contents: read
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          cache: true
+          cache-dependency-path: ./**/packages.lock.json
+          global-json-file: global.json
+
+      - name: download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: libdave-*
+          merge-multiple: false
+          path: artifact
+
+      - name: restore
+        shell: pwsh
+        run: |
+          dotnet restore --locked-mode
+
+          $artifact = Join-Path ${{ github.workspace }} "artifact"
+          $output = Join-Path ${{ github.workspace }} "src"
+
+          foreach ($runtime in @("linux-arm64", "linux-x64", "osx-arm64", "osx-x64", "win-x64")) {
+            foreach ($file in Get-ChildItem -Path ([System.IO.Path]::Combine($artifact, "libdave-$runtime", "lib")) -Recurse -File) {
+              New-Item -ItemType Directory -Path ([System.IO.Path]::Combine($output, "static", $runtime, "native")) -Force | Out-Null
+
+              $destination = [System.IO.Path]::Combine($output, "static", $runtime, "native", $file.Name)
+              Move-Item -Path $file.FullName -Destination $destination -Force
+
+              Write-Host "[!] Moved ${file.FullName} to '$destination'"
+            }
+
+            foreach ($file in Get-ChildItem -Path ([System.IO.Path]::Combine($artifact, "libdave-$runtime", "bin")) -Recurse -File) {
+              New-Item -ItemType Directory -Path ([System.IO.Path]::Combine($output, "shared", $runtime, "native")) -Force | Out-Null
+
+              $destination = [System.IO.Path]::Combine($output, "shared", $runtime, "native", $file.Name)
+              Move-Item -Path $file.FullName -Destination $destination -Force
+
+              Write-Host "[!] Moved ${file.FullName} to '$destination'"
+            }
+          }
+
+      - name: pack
+        run: dotnet build src/libdave.csproj -c Release -p:LibDaveVersion="${{ env.LIBDAVE_VERSION }}" && dotnet pack src/libdave.csproj -c Release -o dist --no-build -p:LibDaveVersion="${{ env.LIBDAVE_VERSION }}"
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libdave-nuget
+          path: dist
+
+  publish:
+    needs: [pack]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: nuget login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: download artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: libdave-nuget
+
+      - name: push
+        run: dotnet nuget push "*.nupkg" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate

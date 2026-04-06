@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.Build.NoTargets/3.7.134">
+
   <PropertyGroup>
     <Description>Native library assets for libdave.</Description>
     <InvariantGlobalization>true</InvariantGlobalization>
@@ -14,4 +15,5 @@
     <Content Include="shared\**\*.*" Pack="true" PackagePath="shared\" />
     <Content Include="static\**\*.*" Pack="true" PackagePath="static\" />
   </ItemGroup>
+
 </Project>

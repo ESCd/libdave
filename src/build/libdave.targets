@@ -5,7 +5,7 @@
     <LibDaveEnableStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveEnableStaticLinking>
 
     <!-- NOTE: enable static linking if AOT publishing is enabled and a runtime identifier is specified -->
-    <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' == 'win-x64' ">true</LibDaveEnableStaticLinking>
+    <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' == '' ">true</LibDaveEnableStaticLinking>
 
     <!-- NOTE: disable runtime linking if static linking is enabled -->
     <LibDaveEnableRuntimeLinking Condition=" '$(LibDaveEnableStaticLinking)' == 'true' ">false</LibDaveEnableRuntimeLinking>
@@ -31,9 +31,5 @@
     <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*.*" />
     <DirectPInvoke Include="libdave" />
   </ItemGroup>
-
-  <Target Name="ValidateLibDaveStaticLinking" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != 'win-x64' ">
-    <Error Text="Static Linking is only supported when targeting `win-x64`." />
-  </Target>
 
 </Project>
