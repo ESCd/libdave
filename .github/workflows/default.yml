@@ -50,7 +50,7 @@ jobs:
 
           - rid: win-x64
             runner: windows-2025
-            vcpkg_rid: x64-windows
+            vcpkg_rid: x64-windows-static
 
     steps:
       - name: checkout
