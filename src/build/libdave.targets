@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND $(RuntimeIdentifier.StartsWith('linux')) ">
-    <LinkerArg Include="@(LibDaveLinkerArgs)" />
+    <LinkerArg Include="$(LibDaveLinkerArgs)" />
   </ItemGroup>
 
 </Project>
