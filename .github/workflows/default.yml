@@ -11,9 +11,13 @@ on:
   workflow_dispatch:
 
 env:
+  ARTIFACT_DIR: ${{ github.workspace }}/dist
+  CMAKE_TOOLCHAIN_FILE: ${{ github.workspace }}/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake
   DOTNET_NOLOGO: true
   LIBDAVE_VERSION: 1.1.1
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+  VCPKG_CACHE_DIR: ${{ github.workspace }}/vcpkg_cache
 
 jobs:
   build:
@@ -23,12 +27,6 @@ jobs:
       run:
         working-directory: ./cpp
         shell: bash
-
-    env:
-      CMAKE_TOOLCHAIN_FILE: ${{ github.workspace }}/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake
-      # OUTPUT_DIR: ${{ github.workspace }}/dist
-      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
-      VCPKG_CACHE_DIR: ${{ github.workspace }}/vcpkg_cache
 
     strategy:
       fail-fast: false
@@ -93,9 +91,8 @@ jobs:
 
       - name: configure (shared)
         run: |
-          mkdir -p "${{ env.BUILD_DIR }}/bin"
-          make "${{ env.BUILD_DIR }}/bin" \
-            BUILD_DIR="${{ env.BUILD_DIR }}/bin" \
+          make "${{ env.BUILD_DIR }}-shared" \
+            BUILD_DIR="${{ env.BUILD_DIR }}-shared" \
             BUILD_TYPE=Release \
             SSL=boringssl \
             BUILD_SHARED_LIBS=ON \
@@ -105,8 +102,8 @@ jobs:
 
       - name: configure (static)
         run: |
-          make "${{ env.BUILD_DIR }}/lib" \
-            BUILD_DIR="${{ env.BUILD_DIR }}/lib" \
+          make "${{ env.BUILD_DIR }}-static" \
+            BUILD_DIR="${{ env.BUILD_DIR }}-static" \
             BUILD_TYPE=Release \
             SSL=boringssl \
             BUILD_SHARED_LIBS=OFF \
@@ -117,41 +114,41 @@ jobs:
       - name: build (shared)
         run: |
           make all \
-            BUILD_DIR="${{ env.BUILD_DIR }}/bin" \
+            BUILD_DIR="${{ env.BUILD_DIR }}-shared" \
             BUILD_TYPE=Release
 
       - name: build (static)
         run: |
           make all \
-            BUILD_DIR="${{ env.BUILD_DIR }}/lib" \
+            BUILD_DIR="${{ env.BUILD_DIR }}-static" \
             BUILD_TYPE=Release
 
-      # - name: prepare artifact (linux)
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     mkdir -p "${{ env.OUTPUT_DIR }}/bin" "${{ env.OUTPUT_DIR }}/lib"
-      #     cp "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.OUTPUT_DIR }}/bin/libdave.so"
-      #     cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.OUTPUT_DIR }}/lib/libdave.a"
+      - name: prepare artifact (linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          cp "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.ARTIFACT_DIR }}/bin/libdave.so"
+          cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
-      # - name: prepare artifact (macOS)
-      #   if: runner.os == 'macOS'
-      #   run: |
-      #     mkdir -p "${{ env.OUTPUT_DIR }}/bin" "${{ env.OUTPUT_DIR }}/lib"
-      #     cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.OUTPUT_DIR }}/bin/libdave.dylib"
-      #     cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.OUTPUT_DIR }}/lib/libdave.a"
+      - name: prepare artifact (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.ARTIFACT_DIR }}/bin/libdave.dylib"
+          cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
-      # - name: prepare artifact (windows)
-      #   if: runner.os == 'Windows'
-      #   run: |
-      #     mkdir -p "${{ env.OUTPUT_DIR }}/bin" "${{ env.OUTPUT_DIR }}/lib"
-      #     cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.OUTPUT_DIR }}/bin/libdave.dll"
-      #     cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.OUTPUT_DIR }}/lib/libdave.lib"
+      - name: prepare artifact (windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
+          cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: libdave-${{ matrix.rid }}
-          path: ${{ env.BUILD_DIR }}
+          path: ${{ env.ARTIFACT_DIR }}
 
       - name: Post cache vcpkg
         if: steps.cache-vcpkg-restore.outputs.cache-hit != 'true'
