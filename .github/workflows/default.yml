@@ -163,7 +163,7 @@ jobs:
           cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
           cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
 
-          ls -la "${{ env.BUILD_DIR }}-static/vcpkg_installed"
+          tree "${{ env.BUILD_DIR }}-static/vcpkg_installed"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
           cp "${VCPKG_INSTALLED}/lib/libssl.lib" "${{ env.ARTIFACT_DIR }}/lib/libssl.lib"
