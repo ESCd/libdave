@@ -2,17 +2,17 @@
 
   <PropertyGroup>
     <!-- NOTE: disable static linking if no runtime identifier is specified -->
-    <LibDaveEnableStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveEnableStaticLinking>
+    <LibDaveStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveStaticLinking>
 
     <!-- NOTE: enable static linking if AOT publishing is enabled and a runtime identifier is specified -->
-    <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' == 'win-x64' ">true</LibDaveEnableStaticLinking>
+    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'auto' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
 
     <!-- NOTE: disable runtime linking if static linking is enabled -->
-    <LibDaveEnableRuntimeLinking Condition=" '$(LibDaveEnableStaticLinking)' == 'true' ">false</LibDaveEnableRuntimeLinking>
+    <LibDaveRuntimeLinking Condition=" '$(LibDaveStaticLinking)' == 'true' ">false</LibDaveRuntimeLinking>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(LibDaveEnableRuntimeLinking)' == 'true' ">
-    <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' == '' ">
+  <ItemGroup Condition=" '$(LibDaveRuntimeLinking)' == 'true' ">
+    <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(Configuration)' == 'Debug' OR '$(RuntimeIdentifier)' == '' ">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <Link>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</Link>
@@ -27,13 +27,24 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
-    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*.*" />
-    <DirectPInvoke Include="libdave" />
+  <PropertyGroup Condition=" '$(LibDaveStaticLinking)' == 'true' ">
+    <LinkStandardCPlusPlusLibrary Condition=" !$([MSBuild]::IsOSPlatform('Windows')) ">true</LinkStandardCPlusPlusLibrary>
+    <StaticOpenSslLinking>true</StaticOpenSslLinking>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(LibDaveStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
+    <DirectPInvoke Include="dave;libdave" />
+
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libdave.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libmlspp.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libtls_syntax.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libbytes.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libhpke.*" />
   </ItemGroup>
 
-  <Target Name="ValidateLibDaveStaticLinking" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != 'win-x64' ">
-    <Error Text="Static Linking is only supported when targeting `win-x64`." />
+  <Target Name="_PrepareLibDaveBuild" AfterTargets="PrepareForBuild">
+    <Error Text="A RuntimeIdentifier must be specified when static linking is enabled." Condition=" '$(LibDaveStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' == '' " />
+    <Warning Text="LibDaveRuntimeLinking=true: runtime linking should not be enabled when static linking is enabled." Condition=" '$(LibDaveRuntimeLinking)' == 'true' AND '$(LibDaveStaticLinking)' == 'true' " />
   </Target>
 
 </Project>
