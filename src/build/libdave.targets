@@ -1,6 +1,6 @@
 <Project>
 
-  <Target Name="PrepareLibDaveDefaults" BeforeTargets="PrepareForBuild">
+  <Target Name="PrepareLibDaveDefaults" BeforeTargets="PrepareForBuild;PrepareForPublish">
     <PropertyGroup>
       <!-- NOTE: disable static linking if no runtime identifier is specified -->
       <LibDaveEnableStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveEnableStaticLinking>
@@ -13,7 +13,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="PrepareLibDaveRuntimeLinking" AfterTargets="PrepareLibDaveDefaults" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveEnableRuntimeLinking)' == 'true' ">
+  <Target Name="PrepareLibDaveRuntimeLinking" AfterTargets="PrepareLibDaveDefaults" BeforeTargets="PrepareForBuild;PrepareForPublish" Condition=" '$(LibDaveEnableRuntimeLinking)' == 'true' ">
     <ItemGroup>
       <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' == '' ">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -31,7 +31,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="PrepareLibDaveStaticLinking" AfterTargets="PrepareLibDaveDefaults" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
+  <Target Name="PrepareLibDaveStaticLinking" AfterTargets="PrepareLibDaveDefaults" BeforeTargets="PrepareForBuild;PrepareForPublish" Condition=" '$(LibDaveEnableStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
     <PropertyGroup>
       <LinkStandardCPlusPlusLibrary Condition=" $([MSBuild]::IsOSPlatform('Linux')) OR $([MSBuild]::IsOSPlatform('OSX')) ">true</LinkStandardCPlusPlusLibrary>
       <StaticOpenSslLinking>true</StaticOpenSslLinking>
