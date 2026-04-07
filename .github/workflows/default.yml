@@ -152,7 +152,6 @@ jobs:
 
       - name: prepare artifact (windows)
         if: runner.os == 'Windows'
-        shell: pwsh
         run: |
           mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
           cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
