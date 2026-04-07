@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 

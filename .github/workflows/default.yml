@@ -126,42 +126,43 @@ jobs:
 
       - name: prepare artifact (linux)
         if: runner.os == 'Linux'
-        shell: pwsh
         run: |
-          New-Item -ItemType Directory -Path "${{ env.ARTIFACT_DIR }}/bin", "${{ env.ARTIFACT_DIR }}/lib" -Force | Out-Null
-          Copy-Item "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.ARTIFACT_DIR }}/bin/libdave.so"
-          Copy-Item "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
+          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          cp "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.ARTIFACT_DIR }}/bin/libdave.so"
+          cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
-          $VcpkgInstalled = "${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          Get-ChildItem -Path "$VcpkgInstalled/lib" -Recurse | Format-Table
-
-          Get-ChildItem -Path "$VcpkgInstalled/lib" -File | Copy-Item -Destination "${{ env.ARTIFACT_DIR }}/lib"
+          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          cp ${VCPKG_INSTALLED}/lib/libbytes.a ${{ env.ARTIFACT_DIR }}/lib/libbytes.a
+          cp ${VCPKG_INSTALLED}/lib/libhpke.a ${{ env.ARTIFACT_DIR }}/lib/libhpke.a
+          cp ${VCPKG_INSTALLED}/lib/libmlspp.a ${{ env.ARTIFACT_DIR }}/lib/libmlspp.a
+          cp ${VCPKG_INSTALLED}/lib/libtls_syntax.a ${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.a
 
       - name: prepare artifact (macOS)
         if: runner.os == 'macOS'
-        shell: pwsh
         run: |
-          New-Item -ItemType Directory -Path "${{ env.ARTIFACT_DIR }}/bin", "${{ env.ARTIFACT_DIR }}/lib" -Force | Out-Null
-          Copy-Item "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.ARTIFACT_DIR }}/bin/libdave.dylib"
-          Copy-Item "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
+          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.ARTIFACT_DIR }}/bin/libdave.dylib"
+          cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
-          $VcpkgInstalled = "${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          Get-ChildItem -Path "$VcpkgInstalled/lib" -Recurse | Format-Table
-
-          Get-ChildItem -Path "$VcpkgInstalled/lib" -File | Copy-Item -Destination "${{ env.ARTIFACT_DIR }}/lib"
+          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          cp ${VCPKG_INSTALLED}/lib/libbytes.a ${{ env.ARTIFACT_DIR }}/lib/libbytes.a
+          cp ${VCPKG_INSTALLED}/lib/libhpke.a ${{ env.ARTIFACT_DIR }}/lib/libhpke.a
+          cp ${VCPKG_INSTALLED}/lib/libmlspp.a ${{ env.ARTIFACT_DIR }}/lib/libmlspp.a
+          cp ${VCPKG_INSTALLED}/lib/libtls_syntax.a ${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.a
 
       - name: prepare artifact (windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Path "${{ env.ARTIFACT_DIR }}/bin", "${{ env.ARTIFACT_DIR }}/lib" -Force | Out-Null
-          Copy-Item "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
-          Copy-Item "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
+          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
+          cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
+          cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
 
-          $VcpkgInstalled = "${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          Get-ChildItem -Path "$VcpkgInstalled/lib" -Recurse | Format-Table
-
-          Get-ChildItem -Path "$VcpkgInstalled/lib" -File | Copy-Item -Destination "${{ env.ARTIFACT_DIR }}/lib"
+          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          cp "${VCPKG_INSTALLED}/lib/bytes.lib" "${{ env.ARTIFACT_DIR }}/lib/libbytes.lib"
+          cp "${VCPKG_INSTALLED}/lib/hpke.lib" "${{ env.ARTIFACT_DIR }}/lib/libhpke.lib"
+          cp "${VCPKG_INSTALLED}/lib/mlspp.lib" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.lib"
+          cp "${VCPKG_INSTALLED}/lib/tls_syntax.lib" "${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.lib"
 
       - name: upload artifact
         uses: actions/upload-artifact@v7

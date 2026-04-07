@@ -8,6 +8,12 @@
         "resolved": "10.0.201",
         "contentHash": "MTE+F0fj0N8dtfkEGIcX3/rEycMbOf54DXq/n6n8cE6ZfDIPEElY8lc4X5BpZ+c7DBoQDGLG0iBY/W0YZ3nhtw=="
       },
+      "Microsoft.Sbom.Targets": {
+        "type": "Direct",
+        "requested": "[4.1.5, )",
+        "resolved": "4.1.5",
+        "contentHash": "i5z+cNu/cOcdO0AgFB8aXk8w6In2H+haaDfSgd9ImvQIK+rSHavHZIogVoAZLL8jLwYx4bAcs5b7EyuMMG4mQQ=="
+      },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
         "requested": "[10.0.201, )",
@@ -57,6 +63,11 @@
         "resolved": "4.6.3",
         "contentHash": "qdcDOgnFZY40+Q9876JUHnlHu7bosOHX8XISRoH94fwk6hgaeQGSgfZd8srWRZNt5bV9ZW2TljcegDNxsf+96A=="
       }
-    }
+    },
+    ".NETStandard,Version=v2.1/linux-arm64": {},
+    ".NETStandard,Version=v2.1/linux-x64": {},
+    ".NETStandard,Version=v2.1/osx-arm64": {},
+    ".NETStandard,Version=v2.1/osx-x64": {},
+    ".NETStandard,Version=v2.1/win-x64": {}
   }
 }

@@ -5,6 +5,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <NoWarn>$(NoWarn);NU5100;NU5128;</NoWarn>
     <PackageReadMeFile>README.md</PackageReadMeFile>
+    <RuntimeIdentifiers>linux-arm64;linux-x64;osx-arm64;osx-x64;win-x64</RuntimeIdentifiers>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 

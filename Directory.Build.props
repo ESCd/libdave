@@ -13,6 +13,7 @@
     <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
     <Features>strict</Features>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateSBOM Condition=" '$(Configuration)' == 'Release' ">true</GenerateSBOM>
     <ImplicitUsings>true</ImplicitUsings>
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>latest</LangVersion>
@@ -54,6 +55,7 @@
 
   <ItemGroup>
     <PackageReference Include="MinVer" Version="7.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.5" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.201" PrivateAssets="all" />
   </ItemGroup>
 
