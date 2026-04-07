@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(LibDaveStaticLinking)' == 'true' ">
-    <LinkStandardCPlusPlusLibrary Condition=" $([MSBuild]::IsOSPlatform('Linux')) OR $([MSBuild]::IsOSPlatform('OSX')) ">true</LinkStandardCPlusPlusLibrary>
+    <LinkStandardCPlusPlusLibrary Condition=" !$([MSBuild]::IsOSPlatform('Windows')) ">true</LinkStandardCPlusPlusLibrary>
     <StaticOpenSslLinking>true</StaticOpenSslLinking>
   </PropertyGroup>
 
