@@ -5,8 +5,8 @@
 
     <LibDaveItemsVisible Condition=" '$(LibDaveItemsVisible)' == '' ">false</LibDaveItemsVisible>
     <LibDaveRuntimeLinking Condition=" '$(LibDaveRuntimeLinking)' == '' ">true</LibDaveRuntimeLinking>
-    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == '' ">none</LibDaveStaticLinking>
-    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'none' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
+    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == '' ">auto</LibDaveStaticLinking>
+    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'auto' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
   </PropertyGroup>
 
 </Project>

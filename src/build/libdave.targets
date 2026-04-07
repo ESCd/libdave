@@ -5,7 +5,7 @@
     <LibDaveStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveStaticLinking>
 
     <!-- NOTE: enable static linking if AOT publishing is enabled and a runtime identifier is specified -->
-    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'none' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
+    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'auto' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
 
     <!-- NOTE: disable runtime linking if static linking is enabled -->
     <LibDaveRuntimeLinking Condition=" '$(LibDaveStaticLinking)' == 'true' ">false</LibDaveRuntimeLinking>
