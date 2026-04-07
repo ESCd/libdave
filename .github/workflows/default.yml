@@ -97,7 +97,6 @@ jobs:
           make "${{ env.BUILD_DIR }}-shared" \
             BUILD_DIR="${{ env.BUILD_DIR }}-shared" \
             BUILD_TYPE=Release \
-            SSL=openssl \
             BUILD_SHARED_LIBS=ON \
             TESTING=OFF \
             INSTALL_VCPKG_LICENSES=ON \
@@ -108,7 +107,6 @@ jobs:
           make "${{ env.BUILD_DIR }}-static" \
             BUILD_DIR="${{ env.BUILD_DIR }}-static" \
             BUILD_TYPE=Release \
-            SSL=openssl \
             BUILD_SHARED_LIBS=OFF \
             TESTING=OFF \
             INSTALL_VCPKG_LICENSES=ON \
