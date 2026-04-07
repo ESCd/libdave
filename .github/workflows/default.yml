@@ -134,7 +134,9 @@ jobs:
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
           ls -aR "${VCPKG_INSTALLED}/lib"
 
-          cp "${VCPKG_INSTALLED}/lib/*.a" "${{ env.ARTIFACT_DIR }}/lib"
+          for file in "${VCPKG_INSTALLED}/lib/*.a"; do
+            cp "$file" "${{ env.ARTIFACT_DIR }}/lib"
+          done
 
       - name: prepare artifact (macOS)
         if: runner.os == 'macOS'
@@ -146,7 +148,11 @@ jobs:
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
           ls -aR "${VCPKG_INSTALLED}/lib"
 
-          cp "${VCPKG_INSTALLED}/lib/*.a" "${{ env.ARTIFACT_DIR }}/lib"
+          for file in "${VCPKG_INSTALLED}/lib/*.a"; do
+            cp "$file" "${{ env.ARTIFACT_DIR }}/lib"
+          done
+
+          # cp "${VCPKG_INSTALLED}/lib/*.a" "${{ env.ARTIFACT_DIR }}/lib"
 
       - name: prepare artifact (windows)
         if: runner.os == 'Windows'
@@ -158,7 +164,9 @@ jobs:
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
           ls -aR "${VCPKG_INSTALLED}/lib"
 
-          cp "${VCPKG_INSTALLED}/lib/*.lib" "${{ env.ARTIFACT_DIR }}/lib"
+          for file in "${VCPKG_INSTALLED}/lib/*.a"; do
+            cp "$file" "${{ env.ARTIFACT_DIR }}/lib"
+          done
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
