@@ -11,39 +11,40 @@
     <LibDaveRuntimeLinking Condition=" '$(LibDaveStaticLinking)' == 'true' ">false</LibDaveRuntimeLinking>
   </PropertyGroup>
 
-  <Target Name="PrepareLibDaveRuntimeLinking" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveRuntimeLinking)' == 'true' ">
-    <ItemGroup>
-      <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' == '' ">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <Link>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</Link>
-        <TargetPath>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
-      </Content>
+  <ItemGroup Condition=" '$(LibDaveRuntimeLinking)' == 'true' ">
+    <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(Configuration)' == 'Debug' OR '$(RuntimeIdentifier)' == '' ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Link>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <TargetPath>runtimes\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+    </Content>
 
-      <Content Include="$(LibDaveDirectory)\shared\$(RuntimeIdentifier)\native\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' != '' ">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <Link>%(Filename)%(Extension)</Link>
-        <TargetPath>%(Filename)%(Extension)</TargetPath>
-      </Content>
-    </ItemGroup>
-  </Target>
+    <Content Include="$(LibDaveDirectory)\shared\$(RuntimeIdentifier)\native\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' != '' ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+      <TargetPath>%(Filename)%(Extension)</TargetPath>
+    </Content>
+  </ItemGroup>
 
-  <Target Name="PrepareLibDaveStaticLinking" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
-    <PropertyGroup>
-      <LinkStandardCPlusPlusLibrary Condition=" $([MSBuild]::IsOSPlatform('Linux')) OR $([MSBuild]::IsOSPlatform('OSX')) ">true</LinkStandardCPlusPlusLibrary>
-      <StaticOpenSslLinking>true</StaticOpenSslLinking>
-    </PropertyGroup>
+  <PropertyGroup Condition=" '$(LibDaveStaticLinking)' == 'true' ">
+    <LinkStandardCPlusPlusLibrary Condition=" $([MSBuild]::IsOSPlatform('Linux')) OR $([MSBuild]::IsOSPlatform('OSX')) ">true</LinkStandardCPlusPlusLibrary>
+    <StaticOpenSslLinking>true</StaticOpenSslLinking>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <DirectPInvoke Include="dave;libdave" />
+  <ItemGroup Condition=" '$(LibDaveStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
+    <DirectPInvoke Include="dave;libdave" />
 
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libdave.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libmlspp.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libtls_syntax.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libbytes.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libhpke.*" />
-    </ItemGroup>
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libdave.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libmlspp.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libtls_syntax.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libbytes.*" />
+    <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libhpke.*" />
+  </ItemGroup>
+
+  <Target Name="_PrepareLibDaveBuild" AfterTargets="PrepareForBuild">
+    <Error Text="A RuntimeIdentifier must be specified when static linking is enabled." Condition=" '$(LibDaveStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' == '' " />
+    <Warning Text="LibDaveRuntimeLinking=true: runtime linking should not be enabled when static linking is enabled." Condition=" '$(LibDaveRuntimeLinking)' == 'true' AND '$(LibDaveStaticLinking)' == 'true' " />
   </Target>
 
 </Project>
