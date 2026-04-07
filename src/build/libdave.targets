@@ -40,11 +40,11 @@
     <ItemGroup Condition=" '$(LibDaveEnableStaticLinking)' == 'true' ">
       <DirectPInvoke Include="dave;libdave" />
 
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*dave.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*mlspp.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*tls_syntax.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*bytes.*" />
-      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\*hpke.*" />
+      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libdave.*" />
+      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libmlspp.*" />
+      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libtls_syntax.*" />
+      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libbytes.*" />
+      <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libhpke.*" />
     </ItemGroup>
   </Target>
 
