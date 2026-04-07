@@ -132,7 +132,7 @@ jobs:
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          ls -lR "${VCPKG_INSTALLED}/lib"
+          ls -aR "${VCPKG_INSTALLED}/lib"
 
           cp "${VCPKG_INSTALLED}/lib/*.a" "${{ env.ARTIFACT_DIR }}/lib"
 
@@ -144,7 +144,7 @@ jobs:
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          ls -lR "${VCPKG_INSTALLED}/lib"
+          ls -aR "${VCPKG_INSTALLED}/lib"
 
           cp "${VCPKG_INSTALLED}/lib/*.a" "${{ env.ARTIFACT_DIR }}/lib"
 
@@ -152,13 +152,11 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
-          ls -la ${{ env.BUILD_DIR }}-shared/Release && ls -la ${{ env.BUILD_DIR }}-static/Release
-
           cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
           cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          ls -lR "${VCPKG_INSTALLED}/lib"
+          ls -aR "${VCPKG_INSTALLED}/lib"
 
           cp "${VCPKG_INSTALLED}/lib/*.lib" "${{ env.ARTIFACT_DIR }}/lib"
 
