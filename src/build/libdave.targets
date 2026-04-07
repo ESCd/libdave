@@ -1,20 +1,18 @@
 <Project>
 
-  <Target Name="PrepareLibDaveDefaults" AfterTargets="PrepareForBuild" BeforeTargets="Build">
-    <PropertyGroup>
-      <!-- NOTE: disable static linking if no runtime identifier is specified -->
-      <LibDaveStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveStaticLinking>
+  <PropertyGroup>
+    <!-- NOTE: disable static linking if no runtime identifier is specified -->
+    <LibDaveStaticLinking Condition=" '$(RuntimeIdentifier)' == '' ">false</LibDaveStaticLinking>
 
-      <!-- NOTE: enable static linking if AOT publishing is enabled and a runtime identifier is specified -->
-      <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'none' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
+    <!-- NOTE: enable static linking if AOT publishing is enabled and a runtime identifier is specified -->
+    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'none' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
 
-      <!-- NOTE: disable runtime linking if static linking is enabled -->
-      <LibDaveRuntimeLinking Condition=" '$(LibDaveStaticLinking)' == 'true' ">false</LibDaveRuntimeLinking>
-    </PropertyGroup>
-  </Target>
+    <!-- NOTE: disable runtime linking if static linking is enabled -->
+    <LibDaveRuntimeLinking Condition=" '$(LibDaveStaticLinking)' == 'true' ">false</LibDaveRuntimeLinking>
+  </PropertyGroup>
 
-  <Target Name="PrepareLibDaveRuntimeLinking" DependsOnTargets="PrepareLibDaveDefaults" BeforeTargets="Build">
-    <ItemGroup Condition=" '$(LibDaveRuntimeLinking)' == 'true' ">
+  <Target Name="PrepareLibDaveRuntimeLinking" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveRuntimeLinking)' == 'true' ">
+    <ItemGroup>
       <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' == '' ">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -31,13 +29,13 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="PrepareLibDaveStaticLinking" DependsOnTargets="PrepareLibDaveDefaults" BeforeTargets="Build" Condition=" '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
-    <PropertyGroup Condition=" '$(LibDaveStaticLinking)' == 'true' ">
+  <Target Name="PrepareLibDaveStaticLinking" BeforeTargets="PrepareForBuild" Condition=" '$(LibDaveStaticLinking)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
+    <PropertyGroup>
       <LinkStandardCPlusPlusLibrary Condition=" $([MSBuild]::IsOSPlatform('Linux')) OR $([MSBuild]::IsOSPlatform('OSX')) ">true</LinkStandardCPlusPlusLibrary>
       <StaticOpenSslLinking>true</StaticOpenSslLinking>
     </PropertyGroup>
 
-    <ItemGroup Condition=" '$(LibDaveStaticLinking)' == 'true' ">
+    <ItemGroup>
       <DirectPInvoke Include="dave;libdave" />
 
       <NativeLibrary Include="$(LibDaveDirectory)\static\$(RuntimeIdentifier)\native\libdave.*" />
