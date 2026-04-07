@@ -126,39 +126,42 @@ jobs:
 
       - name: prepare artifact (linux)
         if: runner.os == 'Linux'
+        shell: pwsh
         run: |
-          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
-          cp "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.ARTIFACT_DIR }}/bin/libdave.so"
-          cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
+          New-Item -ItemType Directory -Path "${{ env.ARTIFACT_DIR }}/bin", "${{ env.ARTIFACT_DIR }}/lib" -Force | Out-Null
+          Copy-Item "${{ env.BUILD_DIR }}-shared/libdave.so" "${{ env.ARTIFACT_DIR }}/bin/libdave.so"
+          Copy-Item "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
-          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          ls -aR "${VCPKG_INSTALLED}/lib"
+          $VcpkgInstalled = "${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          Get-ChildItem -Path "$VcpkgInstalled/lib" -Recurse | Format-Table
 
-          cp ${VCPKG_INSTALLED}/lib/*.a ${{ env.ARTIFACT_DIR }}/lib
+          Get-ChildItem -Path "$VcpkgInstalled/lib" -File | Copy-Item -Destination "${{ env.ARTIFACT_DIR }}/lib"
 
       - name: prepare artifact (macOS)
         if: runner.os == 'macOS'
+        shell: pwsh
         run: |
-          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
-          cp "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.ARTIFACT_DIR }}/bin/libdave.dylib"
-          cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
+          New-Item -ItemType Directory -Path "${{ env.ARTIFACT_DIR }}/bin", "${{ env.ARTIFACT_DIR }}/lib" -Force | Out-Null
+          Copy-Item "${{ env.BUILD_DIR }}-shared/libdave.dylib" "${{ env.ARTIFACT_DIR }}/bin/libdave.dylib"
+          Copy-Item "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
-          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          ls -aR "${VCPKG_INSTALLED}/lib"
+          $VcpkgInstalled = "${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          Get-ChildItem -Path "$VcpkgInstalled/lib" -Recurse | Format-Table
 
-          cp ${VCPKG_INSTALLED}/lib/*.a ${{ env.ARTIFACT_DIR }}/lib
+          Get-ChildItem -Path "$VcpkgInstalled/lib" -File | Copy-Item -Destination "${{ env.ARTIFACT_DIR }}/lib"
 
       - name: prepare artifact (windows)
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          mkdir -p "${{ env.ARTIFACT_DIR }}/bin" "${{ env.ARTIFACT_DIR }}/lib"
-          cp "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
-          cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
+          New-Item -ItemType Directory -Path "${{ env.ARTIFACT_DIR }}/bin", "${{ env.ARTIFACT_DIR }}/lib" -Force | Out-Null
+          Copy-Item "${{ env.BUILD_DIR }}-shared/Release/libdave.dll" "${{ env.ARTIFACT_DIR }}/bin/libdave.dll"
+          Copy-Item "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
 
-          VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          ls -aR "${VCPKG_INSTALLED}/lib"
+          $VcpkgInstalled = "${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          Get-ChildItem -Path "$VcpkgInstalled/lib" -Recurse | Format-Table
 
-          cp ${VCPKG_INSTALLED}/lib/*.lib ${{ env.ARTIFACT_DIR }}/lib
+          Get-ChildItem -Path "$VcpkgInstalled/lib" -File | Copy-Item -Destination "${{ env.ARTIFACT_DIR }}/lib"
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
