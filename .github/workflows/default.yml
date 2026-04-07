@@ -69,8 +69,8 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: ${{ env.VCPKG_CACHE_DIR }}
-          key: vcpkg-${{ matrix.runner }}-boringssl-v03-${{ hashFiles('cpp/vcpkg_commit.txt', 'cpp/vcpkg-alts/**') }}
-          restore-keys: vcpkg-${{ matrix.runner }}-boringssl
+          key: vcpkg-${{ matrix.runner }}-openssl-${{ hashFiles('cpp/vcpkg_commit.txt', 'cpp/vcpkg-alts/**') }}
+          restore-keys: vcpkg-${{ matrix.runner }}-openssl
 
       - name: setup tools (Linux)
         if: runner.os == 'Linux'
@@ -78,9 +78,7 @@ jobs:
 
       - name: setup tools (macOS)
         if: runner.os == 'macOS'
-        run: |
-          brew install go nasm
-          brew unlink openssl@3 || true
+        run: brew install go nasm
 
       - name: bootstrap vcpkg (linux/macOS)
         if: runner.os != 'Windows'
@@ -99,7 +97,7 @@ jobs:
           make "${{ env.BUILD_DIR }}-shared" \
             BUILD_DIR="${{ env.BUILD_DIR }}-shared" \
             BUILD_TYPE=Release \
-            SSL=boringssl \
+            SSL=openssl \
             BUILD_SHARED_LIBS=ON \
             TESTING=OFF \
             INSTALL_VCPKG_LICENSES=ON \
@@ -110,7 +108,7 @@ jobs:
           make "${{ env.BUILD_DIR }}-static" \
             BUILD_DIR="${{ env.BUILD_DIR }}-static" \
             BUILD_TYPE=Release \
-            SSL=boringssl \
+            SSL=openssl \
             BUILD_SHARED_LIBS=OFF \
             TESTING=OFF \
             INSTALL_VCPKG_LICENSES=ON \
@@ -138,14 +136,16 @@ jobs:
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          cp "${VCPKG_INSTALLED}/lib/libbytes.a" "${{ env.ARTIFACT_DIR }}/lib/libbytes.a"
-          cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
-          cp "${VCPKG_INSTALLED}/lib/libhpke.a" "${{ env.ARTIFACT_DIR }}/lib/libhpke.a"
-          cp "${VCPKG_INSTALLED}/lib/libmls_ds.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_ds.a"
-          cp "${VCPKG_INSTALLED}/lib/libmls_vectors.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_vectors.a"
-          cp "${VCPKG_INSTALLED}/lib/libmlspp.a" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.a"
-          cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
-          cp "${VCPKG_INSTALLED}/lib/libtls_syntax.a" "${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.a"
+          ls -lR "${VCPKG_INSTALLED}/lib"
+
+          # cp "${VCPKG_INSTALLED}/lib/libbytes.a" "${{ env.ARTIFACT_DIR }}/lib/libbytes.a"
+          # cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
+          # cp "${VCPKG_INSTALLED}/lib/libhpke.a" "${{ env.ARTIFACT_DIR }}/lib/libhpke.a"
+          # cp "${VCPKG_INSTALLED}/lib/libmls_ds.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_ds.a"
+          # cp "${VCPKG_INSTALLED}/lib/libmls_vectors.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_vectors.a"
+          # cp "${VCPKG_INSTALLED}/lib/libmlspp.a" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.a"
+          # cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
+          # cp "${VCPKG_INSTALLED}/lib/libtls_syntax.a" "${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.a"
 
       - name: prepare artifact (macOS)
         if: runner.os == 'macOS'
@@ -157,14 +157,16 @@ jobs:
           cp "${{ env.BUILD_DIR }}-static/libdave.a" "${{ env.ARTIFACT_DIR }}/lib/libdave.a"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
-          cp "${VCPKG_INSTALLED}/lib/libbytes.a" "${{ env.ARTIFACT_DIR }}/lib/libbytes.a"
-          cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
-          cp "${VCPKG_INSTALLED}/lib/libhpke.a" "${{ env.ARTIFACT_DIR }}/lib/libhpke.a"
-          cp "${VCPKG_INSTALLED}/lib/libmls_ds.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_ds.a"
-          cp "${VCPKG_INSTALLED}/lib/libmls_vectors.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_vectors.a"
-          cp "${VCPKG_INSTALLED}/lib/libmlspp.a" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.a"
-          cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
-          cp "${VCPKG_INSTALLED}/lib/libtls_syntax.a" "${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.a"
+          ls -lR "${VCPKG_INSTALLED}/lib"
+
+          # cp "${VCPKG_INSTALLED}/lib/libbytes.a" "${{ env.ARTIFACT_DIR }}/lib/libbytes.a"
+          # cp "${VCPKG_INSTALLED}/lib/libcrypto.a" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.a"
+          # cp "${VCPKG_INSTALLED}/lib/libhpke.a" "${{ env.ARTIFACT_DIR }}/lib/libhpke.a"
+          # cp "${VCPKG_INSTALLED}/lib/libmls_ds.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_ds.a"
+          # cp "${VCPKG_INSTALLED}/lib/libmls_vectors.a" "${{ env.ARTIFACT_DIR }}/lib/libmls_vectors.a"
+          # cp "${VCPKG_INSTALLED}/lib/libmlspp.a" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.a"
+          # cp "${VCPKG_INSTALLED}/lib/libssl.a" "${{ env.ARTIFACT_DIR }}/lib/libssl.a"
+          # cp "${VCPKG_INSTALLED}/lib/libtls_syntax.a" "${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.a"
 
       - name: prepare artifact (windows)
         if: runner.os == 'Windows'
@@ -176,15 +178,16 @@ jobs:
           cp "${{ env.BUILD_DIR }}-static/Release/libdave.lib" "${{ env.ARTIFACT_DIR }}/lib/libdave.lib"
 
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
+          ls -lR "${VCPKG_INSTALLED}/lib"
 
-          cp "${VCPKG_INSTALLED}/lib/bytes.lib" "${{ env.ARTIFACT_DIR }}/lib/libbytes.lib"
-          cp "${VCPKG_INSTALLED}/lib/crypto.lib" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.lib"
-          cp "${VCPKG_INSTALLED}/lib/hpke.lib" "${{ env.ARTIFACT_DIR }}/lib/libhpke.lib"
-          cp "${VCPKG_INSTALLED}/lib/mls_ds.lib" "${{ env.ARTIFACT_DIR }}/lib/libmls_ds.lib"
-          cp "${VCPKG_INSTALLED}/lib/mls_vectors.lib" "${{ env.ARTIFACT_DIR }}/lib/libmls_vectors.lib"
-          cp "${VCPKG_INSTALLED}/lib/mlspp.lib" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.lib"
-          cp "${VCPKG_INSTALLED}/lib/ssl.lib" "${{ env.ARTIFACT_DIR }}/lib/libssl.lib"
-          cp "${VCPKG_INSTALLED}/lib/tls_syntax.lib" "${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.lib"
+          # cp "${VCPKG_INSTALLED}/lib/bytes.lib" "${{ env.ARTIFACT_DIR }}/lib/libbytes.lib"
+          # cp "${VCPKG_INSTALLED}/lib/crypto.lib" "${{ env.ARTIFACT_DIR }}/lib/libcrypto.lib"
+          # cp "${VCPKG_INSTALLED}/lib/hpke.lib" "${{ env.ARTIFACT_DIR }}/lib/libhpke.lib"
+          # cp "${VCPKG_INSTALLED}/lib/mls_ds.lib" "${{ env.ARTIFACT_DIR }}/lib/libmls_ds.lib"
+          # cp "${VCPKG_INSTALLED}/lib/mls_vectors.lib" "${{ env.ARTIFACT_DIR }}/lib/libmls_vectors.lib"
+          # cp "${VCPKG_INSTALLED}/lib/mlspp.lib" "${{ env.ARTIFACT_DIR }}/lib/libmlspp.lib"
+          # cp "${VCPKG_INSTALLED}/lib/ssl.lib" "${{ env.ARTIFACT_DIR }}/lib/libssl.lib"
+          # cp "${VCPKG_INSTALLED}/lib/tls_syntax.lib" "${{ env.ARTIFACT_DIR }}/lib/libtls_syntax.lib"
 
       - name: upload artifact
         uses: actions/upload-artifact@v7
