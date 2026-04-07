@@ -2,12 +2,11 @@
 
   <PropertyGroup>
     <LibDaveDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..'))</LibDaveDirectory>
-    <LibDaveEnableRuntimeLinking Condition=" '$(LibDaveEnableRuntimeLinking)' == '' ">true</LibDaveEnableRuntimeLinking>
-
-    <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' "></LibDaveEnableStaticLinking>
-    <LibDaveEnableStaticLinking Condition=" '$(LibDaveEnableStaticLinking)' == '' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveEnableStaticLinking>
 
     <LibDaveItemsVisible Condition=" '$(LibDaveItemsVisible)' == '' ">false</LibDaveItemsVisible>
+    <LibDaveRuntimeLinking Condition=" '$(LibDaveRuntimeLinking)' == '' ">true</LibDaveRuntimeLinking>
+    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == '' ">none</LibDaveStaticLinking>
+    <LibDaveStaticLinking Condition=" '$(LibDaveStaticLinking)' == 'none' AND '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">true</LibDaveStaticLinking>
   </PropertyGroup>
 
 </Project>
