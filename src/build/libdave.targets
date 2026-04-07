@@ -13,7 +13,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="PrepareLibDaveRuntimeLinking" AfterTargets="PrepareLibDaveDefaults" BeforeTargets="Build">
+  <Target Name="PrepareLibDaveRuntimeLinking" DependsOnTargets="PrepareLibDaveDefaults" BeforeTargets="Build">
     <ItemGroup Condition=" '$(LibDaveRuntimeLinking)' == 'true' ">
       <Content Include="$(LibDaveDirectory)\shared\**\*.*" Visible="$(LibDaveItemsVisible)" Condition=" '$(RuntimeIdentifier)' == '' ">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -31,7 +31,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="PrepareLibDaveStaticLinking" AfterTargets="PrepareLibDaveDefaults" BeforeTargets="Build" Condition=" '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
+  <Target Name="PrepareLibDaveStaticLinking" DependsOnTargets="PrepareLibDaveDefaults" BeforeTargets="Build" Condition=" '$(PublishAot)' == 'true' AND '$(RuntimeIdentifier)' != '' ">
     <PropertyGroup Condition=" '$(LibDaveStaticLinking)' == 'true' ">
       <LinkStandardCPlusPlusLibrary Condition=" $([MSBuild]::IsOSPlatform('Linux')) OR $([MSBuild]::IsOSPlatform('OSX')) ">true</LinkStandardCPlusPlusLibrary>
       <StaticOpenSslLinking>true</StaticOpenSslLinking>
