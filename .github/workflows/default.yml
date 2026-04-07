@@ -164,7 +164,7 @@ jobs:
           VCPKG_INSTALLED="${{ env.BUILD_DIR }}-static/vcpkg_installed/${{ matrix.vcpkg_rid }}"
           ls -aR "${VCPKG_INSTALLED}/lib"
 
-          for file in "${VCPKG_INSTALLED}/lib/*.a"; do
+          for file in "${VCPKG_INSTALLED}/lib/*.lib"; do
             cp "$file" "${{ env.ARTIFACT_DIR }}/lib"
           done
 
