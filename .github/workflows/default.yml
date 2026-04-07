@@ -243,6 +243,8 @@ jobs:
           path: dist
 
   publish:
+    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')
+
     needs: [pack]
     runs-on: ubuntu-latest
 
