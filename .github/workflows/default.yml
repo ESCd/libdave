@@ -14,7 +14,7 @@ env:
   ARTIFACT_DIR: ${{ github.workspace }}/dist
   CMAKE_TOOLCHAIN_FILE: ${{ github.workspace }}/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake
   DOTNET_NOLOGO: true
-  LIBDAVE_VERSION: 1.1.1
+  LIBDAVE_VERSION: 1.2.1
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
   VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
   VCPKG_CACHE_DIR: ${{ github.workspace }}/vcpkg_cache
