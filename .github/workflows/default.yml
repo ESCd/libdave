@@ -260,9 +260,10 @@ jobs:
           fetch-depth: 1
 
       - name: setup dotnet
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          dotnet-quality: preview
+          dotnet-version: 11.0.x
 
       - name: nuget login
         uses: NuGet/login@v1
