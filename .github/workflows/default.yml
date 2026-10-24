@@ -33,11 +33,11 @@ jobs:
       matrix:
         include:
           - rid: linux-x64
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
             vcpkg_rid: x64-linux
 
           - rid: linux-arm64
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-26.04-arm
             vcpkg_rid: arm64-linux
 
           - rid: osx-arm64
