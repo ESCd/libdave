@@ -31,7 +31,7 @@
 
   <!-- libdave version -->
   <PropertyGroup>
-    <LibDaveVersion Condition=" '$(LibDaveVersion)' == '' ">1.1.1</LibDaveVersion>
+    <LibDaveVersion Condition=" '$(LibDaveVersion)' == '' ">1.3.0</LibDaveVersion>
   </PropertyGroup>
 
   <!-- Git Versioning + Metadata -->
@@ -54,9 +54,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="8 .0.0" PrivateAssets="all" />
+    <PackageReference Include="MinVer" Version="8.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.13" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.*-*" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
